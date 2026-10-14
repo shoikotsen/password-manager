@@ -1,51 +1,223 @@
-<!-- 
-Author: Shoikot Sen
-Project: Password Manager App
-Description: A password manager with delete, encryption, show/hide, and Bootstrap styling.
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Basic page setup -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  
-  <!-- Page title shown on browser tab -->
-  <title>Password Manager</title>
-  
-  <!-- Bootstrap 5 for quick styling -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <!-- Custom CSS styles -->
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Password Manager</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root{--bg:#F4F5EF;--ink:#22352B;--mute:#5E6B55;--card:#FBFBF7;--line:#D5D9C9;--acc:#4F6B3F;--accink:#fff;--bad:#B4472F;--warn:#9A6A00;--good:#3F7A4A;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151D18;--ink:#E3EBDD;--mute:#A3B298;--card:#1D2822;--line:#2E3C33;--acc:#9DBB82;--accink:#151D18;--bad:#E07A62;--warn:#E0B24A;--good:#7FC08A}}
+:root[data-theme="dark"]{--bg:#151D18;--ink:#E3EBDD;--mute:#A3B298;--card:#1D2822;--line:#2E3C33;--acc:#9DBB82;--accink:#151D18;--bad:#E07A62;--warn:#E0B24A;--good:#7FC08A}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:400 16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+h1,h2{font-family:"IBM Plex Sans Condensed","IBM Plex Sans",sans-serif;font-weight:500;letter-spacing:-.03em;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+[hidden]{display:none!important}
+.wrap{max-width:900px;margin:0 auto;padding:24px}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.top h1{font-size:clamp(32px,5vw,44px);margin-right:auto}
+.b{border:1px solid var(--ink);background:none;border-radius:8px;padding:8px 14px;cursor:pointer}
+.b.p{background:var(--acc);border-color:var(--acc);color:var(--accink)}
+.b.s{padding:4px 10px;font-size:14px;border-color:var(--line);color:var(--mute)}
+.b.d{border-color:var(--bad);color:var(--bad)}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-width:0}
+label{display:block;font:600 12px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:12px 0 5px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.narrow{max-width:460px;margin:40px auto}
+.mute{color:var(--mute);font-size:14px}
+.err{color:var(--bad);min-height:22px;margin:8px 0 0}
+.meter{height:6px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;width:0;transition:width .2s}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.big{font:500 30px "IBM Plex Sans Condensed",sans-serif}
+.ctl{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-bottom:14px}
+.row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px}
+.rh{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.rh b{font-size:18px;margin-right:auto;overflow-wrap:anywhere}
+.tag{font:600 11px "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:99px;padding:2px 9px;color:var(--mute)}
+.tag.w{color:var(--bad);border-color:var(--bad)}.tag.r{color:var(--warn);border-color:var(--warn)}
+.pw{font:400 15px "IBM Plex Mono",monospace;margin:8px 0;overflow-wrap:anywhere}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+dialog{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;width:min(540px,94vw);padding:22px}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog textarea{height:150px;font:12px "IBM Plex Mono",monospace}
+.pr{display:flex;gap:8px}
+.gen{margin-top:12px;padding:12px;border:1px dashed var(--line);border-radius:10px}
+.gen label.k{display:inline-flex;gap:6px;align-items:center;margin:8px 14px 0 0;text-transform:none;letter-spacing:0;font:400 14px "IBM Plex Sans",sans-serif;color:var(--ink)}
+.gen label.k input{width:auto}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:99}
+@media (max-width:640px){.ctl{grid-template-columns:1fr 1fr}.ctl input{grid-column:1/-1}.cards{grid-template-columns:1fr 1fr 1fr}}
+</style>
 </head>
+<body>
+<div class="wrap">
+ <header class="top">
+  <h1>Password Manager</h1>
+  <span id="tools" class="acts" hidden>
+   <select id="al" aria-label="Auto-lock" style="width:auto"><option value="1">Lock after 1 min</option><option value="5">Lock after 5 min</option><option value="15">Lock after 15 min</option></select>
+   <button class="b s" id="bkb" type="button">Backup</button>
+   <button class="b" id="lk" type="button">Lock now</button>
+  </span>
+  <button class="b s" id="dk" type="button">Dark mode</button>
+ </header>
 
-<body class="bg-light">
-  <!-- Main container to center the content on the page -->
-  <div class="container mt-5">
-    
-    <!-- App title -->
-    <h2 class="text-center mb-4">🔐 Password Manager</h2>
-    
-    <!-- Form to input website, username, and password -->
-    <form id="password-form" class="card p-4 shadow-sm">
-      <input type="text" id="website" class="form-control mb-2" placeholder="Website" required />
-      <input type="text" id="username" class="form-control mb-2" placeholder="Username" required />
-      <input type="password" id="password" class="form-control mb-2" placeholder="Password" required />
-      <button type="submit" class="btn btn-primary w-100">Add Password</button>
-    </form>
+ <section id="setup" class="c narrow" hidden>
+  <h2 style="font-size:28px">Create your vault</h2>
+  <p class="mute">Choose a master password. Everything is encrypted with it (AES-256-GCM) before it is saved in this browser. It cannot be recovered if you forget it.</p>
+  <label for="m1">Master password</label><input id="m1" type="password" autocomplete="new-password">
+  <div class="meter"><i id="m1m"></i></div><div class="mute" id="m1t"></div>
+  <label for="m2">Confirm</label><input id="m2" type="password" autocomplete="new-password">
+  <p class="err" id="se" role="alert"></p>
+  <button class="b p" id="cr" type="button">Create vault</button>
+ </section>
 
-    <!-- Section to display saved passwords -->
-    <div id="passwords" class="mt-4">
-      <h4>Saved Passwords</h4>
-      
-      <!-- Passwords will be added here dynamically by JavaScript -->
-      <ul id="password-list" class="list-group"></ul>
-    </div>
+ <section id="lock" class="c narrow" hidden>
+  <h2 style="font-size:28px">Vault locked</h2>
+  <label for="um">Master password</label><input id="um" type="password" autocomplete="current-password">
+  <p class="err" id="le" role="alert"></p>
+  <div class="acts"><button class="b p" id="un" type="button">Unlock</button><button class="b s" id="imp" type="button">Import backup</button><button class="b s d" id="rs" type="button">Reset vault</button></div>
+ </section>
+
+ <main id="app" hidden>
+  <div class="cards">
+   <div class="c"><label style="margin-top:0">Saved</label><div class="big" id="n1">0</div></div>
+   <div class="c"><label style="margin-top:0">Weak</label><div class="big" id="n2">0</div></div>
+   <div class="c"><label style="margin-top:0">Reused</label><div class="big" id="n3">0</div></div>
   </div>
+  <div class="ctl">
+   <input id="q" type="search" placeholder="Search site or username" aria-label="Search">
+   <select id="fc" aria-label="Category"></select>
+   <select id="so" aria-label="Sort"><option value="a">A to Z</option><option value="n">Newest</option><option value="w">Weakest first</option></select>
+   <button class="b p" id="add" type="button">Add</button>
+  </div>
+  <div id="list"></div>
+  <p class="mute">Demo project. Your data stays in this browser and is encrypted with your master password. For important accounts, use a dedicated password manager.</p>
+ </main>
+</div>
 
-  <!-- JavaScript file with logic for adding, deleting, and encrypting passwords -->
-  <script src="script.js"></script>
+<dialog id="ed"><form id="ef"><h2 style="font-size:26px" id="et">Add password</h2>
+ <label for="s">Website</label><input id="s" required maxlength="80">
+ <label for="u">Username or email</label><input id="u" maxlength="80" autocomplete="off">
+ <label for="p">Password</label><div class="pr"><input id="p" type="password" required maxlength="128" autocomplete="new-password"><button class="b s" id="sh" type="button">Show</button></div>
+ <div class="meter"><i id="pm"></i></div><div class="mute" id="pt"></div>
+ <details class="gen"><summary>Password generator</summary>
+  <label for="gl" style="margin-top:10px">Length: <span id="gv">16</span></label><input id="gl" type="range" min="8" max="64" value="16">
+  <div><label class="k"><input type="checkbox" id="gU" checked>A-Z</label><label class="k"><input type="checkbox" id="gL" checked>a-z</label><label class="k"><input type="checkbox" id="gD" checked>0-9</label><label class="k"><input type="checkbox" id="gS" checked>Symbols</label></div>
+  <button class="b s" id="gg" type="button" style="margin-top:10px">Generate and use</button>
+ </details>
+ <label for="c">Category</label><select id="c"><option>Personal</option><option>Work</option><option>Finance</option><option>Social</option><option>Other</option></select>
+ <label for="nt">Notes</label><input id="nt" maxlength="120">
+ <div class="acts" style="margin-top:16px"><button class="b p" type="submit">Save</button><button class="b" id="ec" type="button">Cancel</button></div>
+</form></dialog>
+
+<dialog id="bk"><h2 style="font-size:26px">Encrypted backup</h2>
+ <p class="mute">This text is encrypted. Copy it somewhere safe. To restore, paste it below and import, then unlock with the master password it was made with.</p>
+ <textarea id="bt" aria-label="Backup data"></textarea>
+ <div class="acts" style="margin-top:12px"><button class="b p" id="bc" type="button">Copy</button><a class="b" id="bd" download="vault-backup.json">Download</a><button class="b" id="bi" type="button">Import this text</button><button class="b" id="bx" type="button" style="margin-left:auto">Close</button></div>
+ <p class="err" id="be" role="alert"></p>
+</dialog>
+<div id="toast" hidden role="status"></div>
+
+<script>
+var KEY='password-manager.v2',SET='password-manager.settings',enc=new TextEncoder(),dec=new TextDecoder(),V=null,mem=null,key=null,items=[],shown={},editId=null,idle,clip,tt,pend={};
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function b64(buf){var a=new Uint8Array(buf),s='';for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s)}
+function unb64(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function readV(){try{var d=localStorage.getItem(KEY);if(d)return JSON.parse(d)}catch(e){}return mem}
+function writeV(){mem=V;try{localStorage.setItem(KEY,JSON.stringify(V))}catch(e){}}
+function toast(m){var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(function(){t.hidden=true},3500)}
+async function derive(pw,salt){var k=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:600000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function seal(){var iv=crypto.getRandomValues(new Uint8Array(12)),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,enc.encode(JSON.stringify(items)));V.iv=b64(iv);V.data=b64(ct);writeV()}
+async function openVault(pw){var k=await derive(pw,unb64(V.salt)),pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(V.iv)},k,unb64(V.data));items=JSON.parse(dec.decode(pt));key=k}
+function strength(pw){
+ var pool=0;if(/[a-z]/.test(pw))pool+=26;if(/[A-Z]/.test(pw))pool+=26;if(/\d/.test(pw))pool+=10;if(/[^A-Za-z0-9]/.test(pw))pool+=32;
+ var uniq=new Set(pw.split('')).size,bits=pool?Math.min(pw.length,uniq*2)*Math.log2(pool):0;
+ if(/^(.)\1+$/.test(pw)||/(password|123456|qwerty|letmein)/i.test(pw))bits=Math.min(bits,20);
+ var l=bits<40?['Weak','var(--bad)',25]:bits<60?['Fair','var(--warn)',50]:bits<80?['Good','var(--good)',75]:['Strong','var(--good)',100];
+ return{bits:bits,label:l[0],color:l[1],pct:pw?l[2]:0,weak:pw.length<8||bits<40}
+}
+function meter(pw,bar,txt){var s=strength(pw);$(bar).style.width=s.pct+'%';$(bar).style.background=s.color;$(txt).textContent=pw?s.label+' ('+Math.round(s.bits)+' bits)':''}
+function rnd(n){var m=Math.floor(4294967296/n)*n,x;do{x=crypto.getRandomValues(new Uint32Array(1))[0]}while(x>=m);return x%n}
+function gen(len,o){var sets=[];if(o.l)sets.push('abcdefghijkmnopqrstuvwxyz');if(o.u)sets.push('ABCDEFGHJKLMNPQRSTUVWXYZ');if(o.d)sets.push('23456789');if(o.s)sets.push('!@#$%^&*-_=+?');if(!sets.length)return'';var all=sets.join(''),out=sets.map(function(s){return s[rnd(s.length)]});while(out.length<len)out.push(all[rnd(all.length)]);for(var i=out.length-1;i>0;i--){var j=rnd(i+1),t=out[i];out[i]=out[j];out[j]=t}return out.slice(0,len).join('')}
+function view(v){['setup','lock','app'].forEach(function(i){$(i).hidden=i!==v});$('tools').hidden=v!=='app';if(v==='lock')$('um').focus();if(v==='setup')$('m1').focus()}
+function lockNow(msg){key=null;items=[];shown={};clearTimeout(idle);$('list').innerHTML='';$('um').value='';$('le').textContent=msg||'';view('lock')}
+function bump(){clearTimeout(idle);if(key)idle=setTimeout(function(){lockNow('Locked after inactivity.')},(+$('al').value||5)*60000)}
+['pointerdown','keydown'].forEach(function(e){document.addEventListener(e,bump)});
+function render(){
+ var q=$('q').value.toLowerCase(),fc=$('fc').value,so=$('so').value,cnt={};
+ items.forEach(function(t){cnt[t.pw]=(cnt[t.pw]||0)+1});
+ var weak=items.filter(function(t){return strength(t.pw).weak}).length,reu=items.filter(function(t){return cnt[t.pw]>1}).length;
+ $('n1').textContent=items.length;$('n2').textContent=weak;$('n3').textContent=reu;
+ var cats=['Personal','Work','Finance','Social','Other'],v=$('fc').value;$('fc').innerHTML='<option value="">All categories</option>'+cats.map(function(c){return'<option>'+c+'</option>'}).join('');$('fc').value=v;
+ var f=items.filter(function(t){return(!q||(t.site+' '+t.user).toLowerCase().indexOf(q)>-1)&&(!fc||t.cat===fc)});
+ f.sort(function(a,b){return so==='n'?b.upd-a.upd:so==='w'?strength(a.pw).bits-strength(b.pw).bits:a.site.localeCompare(b.site)});
+ $('list').innerHTML=f.length?f.map(function(t){var w=strength(t.pw).weak,sh=shown[t.id];return'<div class="row"><div class="rh"><b>'+esc(t.site)+'</b>'+(w?'<span class="tag w">Weak</span>':'')+(cnt[t.pw]>1?'<span class="tag r">Reused</span>':'')+'<span class="tag">'+esc(t.cat)+'</span></div><div class="mute">'+esc(t.user||'No username')+(t.notes?' | '+esc(t.notes):'')+'</div><div class="pw">'+(sh?esc(t.pw):'&bull;'.repeat(Math.min(14,t.pw.length)))+'</div><div class="acts"><button class="b s" data-a="v" data-id="'+t.id+'">'+(sh?'Hide':'Show')+'</button><button class="b s" data-a="cp" data-id="'+t.id+'">Copy password</button><button class="b s" data-a="cu" data-id="'+t.id+'">Copy username</button><button class="b s" data-a="e" data-id="'+t.id+'">Edit</button><button class="b s d" data-a="d" data-id="'+t.id+'">Delete</button></div></div>'}).join(''):'<p class="mute">'+(items.length?'Nothing matches your search.':'Your vault is empty. Click Add to save your first password.')+'</p>';
+}
+function copy(txt,what){
+ var done=function(){toast(what+' copied. Clipboard clears in 20 seconds.');clearTimeout(clip);clip=setTimeout(function(){try{navigator.clipboard.writeText('')}catch(e){}},20000)};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,function(){toast('Could not copy. Show the password and copy it manually.')});else toast('Copy is not available here.')
+}
+async function persist(){await seal();render()}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function openEd(t){editId=t?t.id:null;$('et').textContent=t?'Edit password':'Add password';$('s').value=t?t.site:'';$('u').value=t?t.user:'';$('p').value=t?t.pw:'';$('c').value=t?t.cat:'Personal';$('nt').value=t?t.notes||'':'';$('p').type='password';$('sh').textContent='Show';meter($('p').value,'pm','pt');$('ed').showModal();$('s').focus()}
+$('add').addEventListener('click',function(){openEd(null)});
+$('ec').addEventListener('click',function(){$('ed').close()});
+$('p').addEventListener('input',function(){meter($('p').value,'pm','pt')});
+$('sh').addEventListener('click',function(){var h=$('p').type==='password';$('p').type=h?'text':'password';$('sh').textContent=h?'Hide':'Show'});
+$('gl').addEventListener('input',function(){$('gv').textContent=$('gl').value});
+$('gg').addEventListener('click',function(){var p=gen(+$('gl').value,{u:$('gU').checked,l:$('gL').checked,d:$('gD').checked,s:$('gS').checked});if(!p){toast('Pick at least one character type.');return}$('p').value=p;$('p').type='text';$('sh').textContent='Hide';meter(p,'pm','pt')});
+$('ef').addEventListener('submit',async function(e){
+ e.preventDefault();var t={id:editId||uid(),site:$('s').value.trim(),user:$('u').value.trim(),pw:$('p').value,cat:$('c').value,notes:$('nt').value.trim(),upd:Date.now()};
+ if(!t.site||!t.pw)return;
+ if(editId)items=items.map(function(x){return x.id===editId?t:x});else items.push(t);
+ await persist();$('ed').close();toast('Saved')
+});
+document.addEventListener('click',async function(e){
+ var b=e.target.closest('button[data-a]');if(!b)return;var id=b.dataset.id,t=items.find(function(x){return x.id===id});if(!t)return;
+ if(b.dataset.a==='v'){shown[id]=!shown[id];render()}
+ if(b.dataset.a==='cp')copy(t.pw,'Password');
+ if(b.dataset.a==='cu')copy(t.user,'Username');
+ if(b.dataset.a==='e')openEd(t);
+ if(b.dataset.a==='d'){if(pend[id]){items=items.filter(function(x){return x.id!==id});delete pend[id];await persist();toast('Deleted')}else{pend[id]=1;b.textContent='Confirm delete';setTimeout(function(){delete pend[id];if(b.isConnected)b.textContent='Delete'},3000)}}
+});
+['q','fc','so'].forEach(function(i){$(i).addEventListener('input',render)});
+$('m1').addEventListener('input',function(){meter($('m1').value,'m1m','m1t')});
+$('cr').addEventListener('click',async function(){
+ var a=$('m1').value,b=$('m2').value,er=$('se');er.textContent='';
+ if(a.length<10){er.textContent='Use at least 10 characters.';return}
+ if(a!==b){er.textContent='The two passwords do not match.';return}
+ if(strength(a).weak){er.textContent='That password is too easy to guess. Try a longer one.';return}
+ if(!window.crypto||!crypto.subtle){er.textContent='Encryption is not available in this browser (needs https).';return}
+ $('cr').disabled=true;er.textContent='Creating...';
+ try{var salt=crypto.getRandomValues(new Uint8Array(16));key=await derive(a,salt);items=[];V={v:2,salt:b64(salt)};await seal();$('m1').value=$('m2').value='';er.textContent='';view('app');render();bump()}catch(x){er.textContent='Something went wrong creating the vault.'}
+ $('cr').disabled=false
+});
+async function unlock(){
+ var er=$('le');er.textContent='';$('un').disabled=true;er.textContent='Unlocking...';
+ try{await openVault($('um').value);$('um').value='';er.textContent='';view('app');render();bump()}catch(x){er.textContent='Incorrect master password.'}
+ $('un').disabled=false
+}
+$('un').addEventListener('click',unlock);
+$('um').addEventListener('keydown',function(e){if(e.key==='Enter')unlock()});
+$('lk').addEventListener('click',function(){lockNow('')});
+$('rs').addEventListener('click',function(){var b=$('rs');if(pend.rs){try{localStorage.removeItem(KEY)}catch(e){}V=mem=null;delete pend.rs;b.textContent='Reset vault';view('setup')}else{pend.rs=1;b.textContent='Click again: erases everything';setTimeout(function(){delete pend.rs;b.textContent='Reset vault'},4000)}});
+function showBk(imp){$('bt').value=imp?'':JSON.stringify(V);$('bt').readOnly=!imp;$('be').textContent='';$('bd').href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(V||{}));$('bd').hidden=!!imp;$('bc').hidden=!!imp;$('bi').hidden=!imp;$('bk').showModal()}
+$('bkb').addEventListener('click',function(){showBk(false)});
+$('imp').addEventListener('click',function(){showBk(true)});
+$('bx').addEventListener('click',function(){$('bk').close()});
+$('bc').addEventListener('click',function(){$('bt').select();try{document.execCommand('copy');toast('Backup copied')}catch(e){}});
+$('bi').addEventListener('click',function(){
+ try{var d=JSON.parse($('bt').value);if(!d.salt||!d.iv||!d.data)throw 0;unb64(d.salt);unb64(d.iv);unb64(d.data);V=d;writeV();key=null;items=[];$('bk').close();lockNow('Backup imported. Unlock it with the master password it was made with.')}catch(e){$('be').textContent='That does not look like a valid backup. Paste the full text, then click Import.'}
+});
+$('bt').addEventListener('input',function(){$('bt').readOnly=false});
+$('al').addEventListener('change',function(){try{localStorage.setItem(SET,$('al').value)}catch(e){}bump()});
+function isDark(){var r=document.documentElement;return r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches)}
+$('dk').addEventListener('click',function(){document.documentElement.dataset.theme=isDark()?'light':'dark'});
+try{var al=localStorage.getItem(SET);if(al)$('al').value=al}catch(e){}
+V=readV();view(V?'lock':'setup');
+</script>
 </body>
 </html>
